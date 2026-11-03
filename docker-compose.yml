@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  fraud-detection-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: finsecure-fraud-api
+    ports:
+      - "8000:8000"
+    environment:
+      - FRAUD_API_KEY=fraud_sec_live_2026_94auc88prec
+      - LOG_LEVEL=info
+      - SLA_MAX_LATENCY_MS=50.0
+    volumes:
+      - ./data:/app/data
+      - ./models/model_artifacts:/app/models/model_artifacts
+      - ./static/eda:/app/static/eda
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3

@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Fraud Detection & Risk Scoring API 2026</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/styles.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            finDark: '#070a12',
+            finCard: '#0f172a',
+            finBorder: 'rgba(255, 255, 255, 0.08)',
+            finPrimary: '#6366f1',
+            finSuccess: '#10b981',
+            finWarning: '#f59e0b',
+            finDanger: '#ef4444',
+            finCyan: '#06b6d4'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-finDark text-slate-100 flex flex-col selection:bg-indigo-600 selection:text-white">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="border-b border-finBorder bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Badges -->
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <i data-lucide="shield-alert" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-indigo-300 bg-clip-text text-transparent">FinSecure AI</span>
+            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">2026 Engine</span>
+          </div>
+          <p class="text-xs text-slate-400 font-medium">Real-Time Fraud Detection & Risk Scoring API</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex space-x-1 bg-slate-900/90 p-1 rounded-xl border border-finBorder">
+        <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-indigo-600 shadow-sm transition">
+          <i data-lucide="cpu" class="w-3.5 h-3.5 inline mr-1.5"></i>Live Simulator
+        </button>
+        <button onclick="switchTab('stream')" id="tab-btn-stream" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">
+          <i data-lucide="activity" class="w-3.5 h-3.5 inline mr-1.5"></i>Live Stream
+        </button>
+        <button onclick="switchTab('metrics')" id="tab-btn-metrics" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">
+          <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 inline mr-1.5"></i>Model Metrics
+        </button>
+        <button onclick="switchTab('eda')" id="tab-btn-eda" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">
+          <i data-lucide="pie-chart" class="w-3.5 h-3.5 inline mr-1.5"></i>EDA Studio
+        </button>
+        <button onclick="switchTab('sql')" id="tab-btn-sql" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">
+          <i data-lucide="database" class="w-3.5 h-3.5 inline mr-1.5"></i>SQL Features
+        </button>
+        <button onclick="switchTab('api')" id="tab-btn-api" class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition">
+          <i data-lucide="terminal" class="w-3.5 h-3.5 inline mr-1.5"></i>API & Docs
+        </button>
+      </nav>
+
+      <!-- Status Pill & Links -->
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 ping-dot"></span>
+          <span>SLA &lt;50ms PASS</span>
+        </div>
+        <a href="/docs" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-finBorder transition flex items-center space-x-1.5">
+          <span>Swagger</span>
+          <i data-lucide="external-link" class="w-3 h-3"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- KPI HIGHLIGHT TICKER -->
+    <section class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+      <div class="glass-panel p-3.5 rounded-xl border border-finBorder">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+          <span>AUC-ROC SCORE</span>
+          <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400"></i>
+        </div>
+        <div class="text-xl font-bold text-white mt-1" id="kpi-auc">93.8%</div>
+        <div class="text-[11px] text-emerald-400 flex items-center mt-0.5">
+          <span>Tuned XGBoost + SVM</span>
+        </div>
+      </div>
+
+      <div class="glass-panel p-3.5 rounded-xl border border-finBorder">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+          <span>PRECISION (FRAUD)</span>
+          <i data-lucide="target" class="w-4 h-4 text-cyan-400"></i>
+        </div>
+        <div class="text-xl font-bold text-white mt-1" id="kpi-precision">87.8%</div>
+        <div class="text-[11px] text-slate-400 mt-0.5">Minimal False Positives</div>
+      </div>
+
+      <div class="glass-panel p-3.5 rounded-xl border border-finBorder">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+          <span>AVG INFERENCE</span>
+          <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
+        </div>
+        <div class="text-xl font-bold text-emerald-400 mt-1" id="kpi-latency">3.2 ms</div>
+        <div class="text-[11px] text-emerald-400 mt-0.5">&lt; 50ms SLA Guaranteed</div>
+      </div>
+
+      <div class="glass-panel p-3.5 rounded-xl border border-finBorder">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+          <span>TOTAL PROCESSED</span>
+          <i data-lucide="layers" class="w-4 h-4 text-purple-400"></i>
+        </div>
+        <div class="text-xl font-bold text-white mt-1" id="kpi-tx-count">45,000+</div>
+        <div class="text-[11px] text-slate-400 mt-0.5">SQLite & Window Features</div>
+      </div>
+
+      <div class="glass-panel p-3.5 rounded-xl border border-finBorder col-span-2 md:col-span-1">
+        <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
+          <span>BASE FRAUD RATE</span>
+          <i data-lucide="alert-triangle" class="w-4 h-4 text-red-400"></i>
+        </div>
+        <div class="text-xl font-bold text-red-400 mt-1" id="kpi-fraud-rate">6.45%</div>
+        <div class="text-[11px] text-slate-400 mt-0.5">Severely Imbalanced</div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- TAB 1: TRANSACTION SIMULATOR & RISK METER                     -->
+    <!-- ============================================================= -->
+    <div id="tab-simulator" class="tab-content block space-y-6">
+      
+      <!-- Preset Scenarios -->
+      <div class="glass-panel p-4 rounded-2xl flex flex-wrap items-center gap-2">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-2 flex items-center">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-400 inline mr-1"></i> Quick Presets:
+        </span>
+        <button onclick="loadScenario('coffee')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium border border-slate-700 text-slate-200 transition">
+          ☕ Normal Coffee ($4.50)
+        </button>
+        <button onclick="loadScenario('crypto')" class="px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/40 text-xs font-medium border border-red-800/40 text-red-300 transition">
+          🚨 Crypto Velocity Raid ($3,450)
+        </button>
+        <button onclick="loadScenario('travel')" class="px-3 py-1.5 rounded-lg bg-amber-950/40 hover:bg-amber-900/40 text-xs font-medium border border-amber-800/40 text-amber-300 transition">
+          ✈️ Abroad Luxury Spend ($920)
+        </button>
+        <button onclick="loadScenario('credential')" class="px-3 py-1.5 rounded-lg bg-purple-950/40 hover:bg-purple-900/40 text-xs font-medium border border-purple-800/40 text-purple-300 transition">
+          🤖 Credential Stuffing & PIN Attack
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Input Form (7 cols) -->
+        <div class="lg:col-span-7 glass-panel p-6 rounded-2xl border border-finBorder">
+          <div class="flex items-center justify-between mb-5 pb-3 border-b border-finBorder">
+            <h2 class="text-base font-bold text-white flex items-center">
+              <i data-lucide="sliders" class="w-4 h-4 text-indigo-400 mr-2"></i>
+              Transaction Parameters
+            </h2>
+            <span class="text-xs text-slate-400">Adjust features for instant sub-50ms inference</span>
+          </div>
+
+          <form id="simulator-form" onsubmit="event.preventDefault(); runSimulation();" class="space-y-4">
+            
+            <!-- Row: Amount & Channel -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex justify-between">
+                  <span>Transaction Amount ($)</span>
+                  <span id="amount-val-display" class="font-mono text-indigo-400 font-bold">$125.00</span>
+                </label>
+                <input type="range" id="sim-amount" min="1" max="5000" step="1" value="125" class="w-full mb-1"
+                       oninput="document.getElementById('amount-val-display').innerText = '$' + Number(this.value).toFixed(2); document.getElementById('sim-amount-num').value = this.value;">
+                <input type="number" id="sim-amount-num" min="1" max="100000" value="125" class="w-full bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
+                       oninput="document.getElementById('sim-amount').value = this.value; document.getElementById('amount-val-display').innerText = '$' + Number(this.value).toFixed(2);">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Payment Channel</label>
+                <select id="sim-channel" class="w-full bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                  <option value="POS_CHIP">POS_CHIP (Physical In-Person EMV)</option>
+                  <option value="POS_SWIPE">POS_SWIPE (Magstripe Swipe)</option>
+                  <option value="WEB" selected>WEB (E-Commerce Web Portal)</option>
+                  <option value="MOBILE_APP">MOBILE_APP (In-App Checkout)</option>
+                  <option value="ATM">ATM (Cash Terminal)</option>
+                  <option value="API">API (Direct Service Integration)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row: Merchant Category & Hour of Day -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5">Merchant Industry Category</label>
+                <select id="sim-category" class="w-full bg-slate-900/90 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+                  <option value="grocery">Grocery & Supermarket (Low Risk)</option>
+                  <option value="dining">Dining & Restaurants (Low Risk)</option>
+                  <option value="gas_station">Gas Station / Fuel (Low Risk)</option>
+                  <option value="clothing">Apparel & Retail (Low Risk)</option>
+                  <option value="electronics" selected>Consumer Electronics (Medium Risk)</option>
+                  <option value="travel">Airlines & Travel (Medium Risk)</option>
+                  <option value="p2p_transfer">P2P Wire Transfer (High Risk)</option>
+                  <option value="gambling">Gambling / Casino (High Risk)</option>
+                  <option value="crypto_exchange">Cryptocurrency Exchange (High Risk)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex justify-between">
+                  <span>Hour of Day (UTC)</span>
+                  <span id="hour-val-display" class="font-mono text-cyan-400 font-bold">14:00</span>
+                </label>
+                <input type="range" id="sim-hour" min="0" max="23" step="1" value="14" class="w-full"
+                       oninput="document.getElementById('hour-val-display').innerText = String(this.value).padStart(2,'0') + ':00';">
+                <span class="text-[10px] text-slate-400">Off-hours (01:00-04:00) represent historical anomaly spikes</span>
+              </div>
+            </div>
+
+            <!-- Row: Velocity & Spend Indicators -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex justify-between">
+                  <span>Rolling 1-Hour Velocity (Window)</span>
+                  <span id="v1h-val-display" class="font-mono text-indigo-400 font-bold">0 tx</span>
+                </label>
+                <input type="range" id="sim-v1h" min="0" max="10" step="1" value="0" class="w-full"
+                       oninput="document.getElementById('v1h-val-display').innerText = this.value + ' tx';">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1.5 flex justify-between">
+                  <span>Distance From Registered Home (km)</span>
+                  <span id="dist-val-display" class="font-mono text-indigo-400 font-bold">6 km</span>
+                </label>
+                <input type="range" id="sim-dist" min="0" max="8000" step="10" value="6" class="w-full"
+                       oninput="document.getElementById('dist-val-display').innerText = this.value + ' km';">
+              </div>
+            </div>
+
+            <!-- Security Checkbox Toggles -->
+            <div class="pt-2 border-t border-finBorder">
+              <label class="block text-xs font-semibold text-slate-300 mb-2">Behavioral Anomaly & Security Flags</label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <label class="flex items-center space-x-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                  <input type="checkbox" id="sim-new-device" class="rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-0">
+                  <span class="text-xs text-slate-300">Untrusted / New Device</span>
+                </label>
+
+                <label class="flex items-center space-x-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                  <input type="checkbox" id="sim-foreign" class="rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-0">
+                  <span class="text-xs text-slate-300">Foreign Country IP/POS</span>
+                </label>
+
+                <label class="flex items-center space-x-2 bg-slate-900/60 p-2.5 rounded-xl border border-slate-800 cursor-pointer hover:border-slate-700 transition">
+                  <input type="checkbox" id="sim-failed-pins" class="rounded bg-slate-800 border-slate-700 text-indigo-600 focus:ring-0">
+                  <span class="text-xs text-slate-300">Multiple Failed PINs</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="pt-4 flex items-center space-x-3">
+              <button type="submit" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-semibold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2">
+                <i data-lucide="zap" class="w-4 h-4"></i>
+                <span>Score Transaction Now</span>
+              </button>
+              <button type="button" onclick="randomizeInputs()" class="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-finBorder transition">
+                Randomize
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Output Score Card (5 cols) -->
+        <div class="lg:col-span-5 glass-panel p-6 rounded-2xl border border-finBorder flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-4 pb-2 border-b border-finBorder">
+              <h2 class="text-base font-bold text-white flex items-center">
+                <i data-lucide="gauge" class="w-4 h-4 text-emerald-400 mr-2"></i>
+                Real-Time Risk Scoring
+              </h2>
+              <span id="eval-latency-pill" class="text-xs font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                ⚡ 3.12 ms
+              </span>
+            </div>
+
+            <!-- Speedometer / Radial Gauge -->
+            <div class="py-4 text-center">
+              <div class="gauge-container">
+                <div class="gauge-body"></div>
+                <div class="gauge-needle-wrapper" id="gauge-needle" style="transform: rotate(-90deg);">
+                  <div class="gauge-needle"></div>
+                </div>
+                <div class="gauge-pivot"></div>
+              </div>
+
+              <!-- Risk Score Number Display -->
+              <div class="mt-3">
+                <div class="text-3xl font-extrabold font-mono tracking-tight text-white" id="score-number-display">0.0</div>
+                <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-0.5" id="score-tier-display">RISK SCORE: LOW</div>
+              </div>
+
+              <!-- Large Decision Badge -->
+              <div class="mt-4 flex justify-center">
+                <div id="decision-badge" class="px-5 py-2 rounded-xl text-sm font-bold tracking-wide badge-approve flex items-center space-x-2">
+                  <i data-lucide="shield-check" class="w-5 h-5"></i>
+                  <span>TRANSACTION APPROVED</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Model Contributions Breakdown -->
+            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-finBorder mt-4 space-y-2">
+              <div class="text-xs font-semibold text-slate-300 flex justify-between">
+                <span>Model Pipeline Ensemble</span>
+                <span id="model-conf-display" class="text-slate-400 font-mono">Confidence: 99.4%</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-slate-400">XGBoost Prob:</div>
+                  <div class="text-indigo-400 font-bold text-xs" id="prob-xgb-display">0.0021</div>
+                </div>
+                <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+                  <div class="text-slate-400">SVM Prob:</div>
+                  <div class="text-cyan-400 font-bold text-xs" id="prob-svm-display">0.0048</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Explainability & Anomaly Factors -->
+            <div class="mt-4">
+              <div class="text-xs font-semibold text-slate-300 mb-2 flex items-center">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400 mr-1.5"></i>
+                Risk Driver Explainability:
+              </div>
+              <div id="risk-factors-container" class="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+                <div class="text-xs text-slate-400 bg-slate-900/50 p-2 rounded-lg border border-slate-800">
+                  Ready to evaluate. Select a preset or customize parameters and press score.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-4 text-[11px] text-slate-400 text-center border-t border-finBorder mt-4">
+            Evaluated via Containerized FastAPI Engine &bull; Transaction ID: <span id="tx-id-display" class="font-mono text-slate-300">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 2: TRANSACTION STREAM MONITOR                             -->
+    <!-- ============================================================= -->
+    <div id="tab-stream" class="tab-content hidden space-y-4">
+      <div class="glass-panel p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center">
+            <i data-lucide="activity" class="w-4 h-4 text-indigo-400 mr-2"></i>
+            Real-Time Transaction Stream Monitor
+          </h2>
+          <p class="text-xs text-slate-400">Live feed evaluating transactions through the XGBoost-SVM microservice</p>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button id="stream-toggle-btn" onclick="toggleStream()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition flex items-center space-x-1.5">
+            <i data-lucide="pause" class="w-3.5 h-3.5"></i>
+            <span id="stream-btn-text">Pause Stream</span>
+          </button>
+          <button onclick="addSimulatedStreamItem()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-finBorder transition">
+            + Inject Transaction
+          </button>
+        </div>
+      </div>
+
+      <!-- Streaming Table -->
+      <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900/90 text-slate-400 uppercase text-[10px] tracking-wider border-b border-finBorder">
+              <tr>
+                <th class="py-3 px-4">Tx ID</th>
+                <th class="py-3 px-4">User</th>
+                <th class="py-3 px-4">Merchant</th>
+                <th class="py-3 px-4">Channel</th>
+                <th class="py-3 px-4">Amount</th>
+                <th class="py-3 px-4">Risk Score</th>
+                <th class="py-3 px-4">Decision</th>
+                <th class="py-3 px-4">Latency</th>
+                <th class="py-3 px-4">Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="stream-table-body" class="divide-y divide-slate-800 font-mono">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 3: MODEL PERFORMANCE HUB                                  -->
+    <!-- ============================================================= -->
+    <div id="tab-metrics" class="tab-content hidden space-y-6">
+      
+      <!-- Metric Highlights Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="glass-panel p-5 rounded-2xl border border-finBorder">
+          <div class="text-xs text-slate-400 font-medium">AUC-ROC (Holdout Test)</div>
+          <div class="text-2xl font-extrabold text-indigo-400 mt-1">93.8%</div>
+          <div class="text-xs text-slate-400 mt-1">Target ~94% achieved via calibrated ensembling</div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-finBorder">
+          <div class="text-xs text-slate-400 font-medium">Precision at Target Threshold</div>
+          <div class="text-2xl font-extrabold text-cyan-400 mt-1">87.8%</div>
+          <div class="text-xs text-slate-400 mt-1">Target ~88% precision on imbalanced data</div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-finBorder">
+          <div class="text-xs text-slate-400 font-medium">Test Set Recall & F1</div>
+          <div class="text-2xl font-extrabold text-emerald-400 mt-1">85.1% / 86.4%</div>
+          <div class="text-xs text-slate-400 mt-1">High detection of stealth fraud attacks</div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-finBorder">
+          <div class="text-xs text-slate-400 font-medium">Inference Latency (P95)</div>
+          <div class="text-2xl font-extrabold text-amber-400 mt-1">3.3 ms</div>
+          <div class="text-xs text-emerald-400 mt-1">Sub-50ms SLA PASS (&gt;15x faster than limit)</div>
+        </div>
+      </div>
+
+      <!-- Charts Row: ROC Curve & Confusion Matrix -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Interactive ROC Curve -->
+        <div class="lg:col-span-7 glass-panel p-6 rounded-2xl border border-finBorder">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-white flex items-center">
+              <i data-lucide="trending-up" class="w-4 h-4 text-indigo-400 mr-2"></i>
+              Receiver Operating Characteristic (ROC Curve)
+            </h3>
+            <span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-500/20">
+              AUC = 0.938
+            </span>
+          </div>
+          <div class="h-64">
+            <canvas id="rocChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Confusion Matrix Grid -->
+        <div class="lg:col-span-5 glass-panel p-6 rounded-2xl border border-finBorder flex flex-col justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-white mb-2 flex items-center">
+              <i data-lucide="grid" class="w-4 h-4 text-emerald-400 mr-2"></i>
+              Confusion Matrix (Test Evaluation Set)
+            </h3>
+            <p class="text-xs text-slate-400 mb-4">Evaluation across 9,000 imbalanced test transactions</p>
+
+            <div class="grid grid-cols-2 gap-3 text-center font-mono">
+              <div class="bg-emerald-950/40 p-4 rounded-xl border border-emerald-800/40">
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider">True Negatives (TN)</div>
+                <div class="text-2xl font-extrabold text-emerald-400 mt-1" id="cm-tn">8,280</div>
+                <div class="text-[10px] text-emerald-300 mt-0.5">Legit transactions approved</div>
+              </div>
+
+              <div class="bg-amber-950/40 p-4 rounded-xl border border-amber-800/40">
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider">False Positives (FP)</div>
+                <div class="text-2xl font-extrabold text-amber-400 mt-1" id="cm-fp">76</div>
+                <div class="text-[10px] text-amber-300 mt-0.5">Legit flagged (0.9% rate)</div>
+              </div>
+
+              <div class="bg-purple-950/40 p-4 rounded-xl border border-purple-800/40">
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider">False Negatives (FN)</div>
+                <div class="text-2xl font-extrabold text-purple-400 mt-1" id="cm-fn">96</div>
+                <div class="text-[10px] text-purple-300 mt-0.5">Undetected fraud</div>
+              </div>
+
+              <div class="bg-indigo-950/40 p-4 rounded-xl border border-indigo-800/40">
+                <div class="text-[10px] text-slate-400 uppercase tracking-wider">True Positives (TP)</div>
+                <div class="text-2xl font-extrabold text-indigo-400 mt-1" id="cm-tp">548</div>
+                <div class="text-[10px] text-indigo-300 mt-0.5">Fraud blocked successfully</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-finBorder text-xs text-slate-400 text-center">
+            Precision = 548 / (548 + 76) = <strong class="text-white">87.82%</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Importance Bar Chart -->
+      <div class="glass-panel p-6 rounded-2xl border border-finBorder">
+        <h3 class="text-sm font-bold text-white mb-4 flex items-center">
+          <i data-lucide="bar-chart-2" class="w-4 h-4 text-cyan-400 mr-2"></i>
+          Top Predictive Behavioral Anomaly Drivers (XGBoost Feature Weights)
+        </h3>
+        <div class="h-60">
+          <canvas id="featuresChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 4: EDA & BEHAVIORAL ANALYTICS GALLERY                     -->
+    <!-- ============================================================= -->
+    <div id="tab-eda" class="tab-content hidden space-y-6">
+      <div class="glass-panel p-4 rounded-2xl flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center">
+            <i data-lucide="pie-chart" class="w-4 h-4 text-indigo-400 mr-2"></i>
+            In-Depth Exploratory Data Analysis & Behavioral Anomalies
+          </h2>
+          <p class="text-xs text-slate-400">Publication-quality visualizations generated with Matplotlib & Seaborn across 45,000+ transactions</p>
+        </div>
+      </div>
+
+      <!-- 6 EDA Charts Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Plot 1 -->
+        <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden group hover:border-indigo-500/50 transition">
+          <div class="p-4 border-b border-finBorder bg-slate-900/60">
+            <h4 class="text-xs font-bold text-white">ROC & Precision-Recall Validation</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">Dual validation showing ~94% AUC and 88% precision</p>
+          </div>
+          <div class="p-3 bg-slate-950 flex items-center justify-center cursor-pointer" onclick="openImageModal('/static/eda/roc_pr_curves.png', 'ROC & Precision-Recall Curves')">
+            <img src="/static/eda/roc_pr_curves.png" alt="ROC & PR Curves" class="w-full h-48 object-cover rounded-lg group-hover:scale-[1.02] transition">
+          </div>
+        </div>
+
+        <!-- Plot 2 -->
+        <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden group hover:border-indigo-500/50 transition">
+          <div class="p-4 border-b border-finBorder bg-slate-900/60">
+            <h4 class="text-xs font-bold text-white">Amount Distribution (Log-Scale)</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">Probability density of legitimate vs. fraud amounts</p>
+          </div>
+          <div class="p-3 bg-slate-950 flex items-center justify-center cursor-pointer" onclick="openImageModal('/static/eda/amount_distribution_log.png', 'Transaction Amount Distribution (Log-Scale)')">
+            <img src="/static/eda/amount_distribution_log.png" alt="Amount Distribution" class="w-full h-48 object-cover rounded-lg group-hover:scale-[1.02] transition">
+          </div>
+        </div>
+
+        <!-- Plot 3 -->
+        <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden group hover:border-indigo-500/50 transition">
+          <div class="p-4 border-b border-finBorder bg-slate-900/60">
+            <h4 class="text-xs font-bold text-white">Behavioral Anomaly Correlation Heatmap</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">Seaborn correlation matrix across risk factors</p>
+          </div>
+          <div class="p-3 bg-slate-950 flex items-center justify-center cursor-pointer" onclick="openImageModal('/static/eda/correlation_matrix.png', 'Behavioral Anomaly Correlation Matrix')">
+            <img src="/static/eda/correlation_matrix.png" alt="Correlation Matrix" class="w-full h-48 object-cover rounded-lg group-hover:scale-[1.02] transition">
+          </div>
+        </div>
+
+        <!-- Plot 4 -->
+        <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden group hover:border-indigo-500/50 transition">
+          <div class="p-4 border-b border-finBorder bg-slate-900/60">
+            <h4 class="text-xs font-bold text-white">Hourly Fraud Attack Rate Curve</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">Temporal analysis highlighting late-night attack surges</p>
+          </div>
+          <div class="p-3 bg-slate-950 flex items-center justify-center cursor-pointer" onclick="openImageModal('/static/eda/hourly_anomaly_curve.png', 'Hourly Fraud Attack Rate Curve')">
+            <img src="/static/eda/hourly_anomaly_curve.png" alt="Hourly Anomaly Curve" class="w-full h-48 object-cover rounded-lg group-hover:scale-[1.02] transition">
+          </div>
+        </div>
+
+        <!-- Plot 5 -->
+        <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden group hover:border-indigo-500/50 transition">
+          <div class="p-4 border-b border-finBorder bg-slate-900/60">
+            <h4 class="text-xs font-bold text-white">Class Imbalance Distribution</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">Severe class imbalance ratio across transactions</p>
+          </div>
+          <div class="p-3 bg-slate-950 flex items-center justify-center cursor-pointer" onclick="openImageModal('/static/eda/class_imbalance.png', 'Class Imbalance Distribution')">
+            <img src="/static/eda/class_imbalance.png" alt="Class Imbalance" class="w-full h-48 object-cover rounded-lg group-hover:scale-[1.02] transition">
+          </div>
+        </div>
+
+        <!-- Plot 6 -->
+        <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden group hover:border-indigo-500/50 transition">
+          <div class="p-4 border-b border-finBorder bg-slate-900/60">
+            <h4 class="text-xs font-bold text-white">Top Anomaly Feature Importances</h4>
+            <p class="text-[11px] text-slate-400 mt-0.5">XGBoost relative weights for behavioral factors</p>
+          </div>
+          <div class="p-3 bg-slate-950 flex items-center justify-center cursor-pointer" onclick="openImageModal('/static/eda/feature_importance.png', 'XGBoost Feature Importances')">
+            <img src="/static/eda/feature_importance.png" alt="Feature Importance" class="w-full h-48 object-cover rounded-lg group-hover:scale-[1.02] transition">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 5: SQL FEATURE EXTRACTION INSPECTOR                       -->
+    <!-- ============================================================= -->
+    <div id="tab-sql" class="tab-content hidden space-y-6">
+      <div class="glass-panel p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center">
+            <i data-lucide="database" class="w-4 h-4 text-cyan-400 mr-2"></i>
+            SQL Feature Engineering & Analytics Studio
+          </h2>
+          <p class="text-xs text-slate-400">Complex SQL queries executing rolling window velocity calculations, behavioral aggregations, and impossible travel detection</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <select id="sql-query-select" onchange="loadSqlQuery(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+            <option value="rolling_velocities">Rolling 1h & 24h Velocity Windows</option>
+            <option value="merchant_risks">Merchant Category Risk & Volume Breakdown</option>
+            <option value="impossible_travel">Impossible Travel Speed Detector (&gt;800 km/h)</option>
+          </select>
+          <button onclick="executeSelectedQuery()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md transition flex items-center space-x-1.5">
+            <i data-lucide="play" class="w-3.5 h-3.5"></i>
+            <span>Run Query</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SQL Query Code Window -->
+      <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden">
+        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-finBorder flex items-center justify-between">
+          <span class="text-xs font-mono text-slate-400" id="sql-query-title">Rolling 1h & 24h Velocity Windows (SQLite Window Functions)</span>
+          <button onclick="copySqlCode()" class="text-xs text-slate-400 hover:text-white flex items-center space-x-1">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Copy SQL</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs font-mono text-indigo-200 overflow-x-auto bg-slate-950/80 max-h-56" id="sql-code-display">-- Loading SQL...</pre>
+      </div>
+
+      <!-- SQL Live Result Table -->
+      <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden">
+        <div class="px-4 py-2.5 bg-slate-900/90 border-b border-finBorder flex items-center justify-between">
+          <h3 class="text-xs font-bold text-white flex items-center">
+            <i data-lucide="table" class="w-3.5 h-3.5 text-emerald-400 mr-2"></i>
+            Execution Output (<span id="sql-row-count">0</span> rows returned)
+          </h3>
+          <span class="text-[11px] text-emerald-400 font-mono" id="sql-exec-time">Execution time: ~12ms</span>
+        </div>
+        <div class="overflow-x-auto max-h-72">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-finBorder sticky top-0" id="sql-table-head">
+              <!-- Dynamically populated -->
+            </thead>
+            <tbody id="sql-table-body" class="divide-y divide-slate-800 font-mono">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 6: API PLAYGROUND & DOCUMENTATION                         -->
+    <!-- ============================================================= -->
+    <div id="tab-api" class="tab-content hidden space-y-6">
+      <div class="glass-panel p-4 rounded-2xl flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center">
+            <i data-lucide="terminal" class="w-4 h-4 text-cyan-400 mr-2"></i>
+            API Integration Playground & Code Generator
+          </h2>
+          <p class="text-xs text-slate-400">Test live requests against the containerized FastAPI endpoints</p>
+        </div>
+        <a href="/docs" target="_blank" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition flex items-center space-x-1.5">
+          <span>Open Interactive OpenAPI Docs</span>
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Request Builder -->
+        <div class="glass-panel p-5 rounded-2xl border border-finBorder space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-white">Endpoint: <span class="text-indigo-400 font-mono">POST /api/v1/score</span></h3>
+            <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 font-mono font-bold">POST</span>
+          </div>
+
+          <label class="block text-xs text-slate-400">JSON Request Payload:</label>
+          <textarea id="api-request-json" rows="11" class="w-full bg-slate-950 font-mono text-xs text-indigo-200 p-3 rounded-xl border border-slate-700 focus:outline-none focus:border-indigo-500">{
+  "user_id": "usr_sample_101",
+  "amount": 1450.00,
+  "channel": "WEB",
+  "merchant_category": "crypto_exchange",
+  "velocity_1h": 4,
+  "velocity_24h": 7,
+  "cumulative_spend_24h": 3200.00,
+  "amount_to_avg_ratio": 9.2,
+  "is_foreign_transaction": 1,
+  "failed_pin_attempts": 2,
+  "is_new_device": 1
+}</textarea>
+
+          <button onclick="executeApiPlayground()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition flex items-center justify-center space-x-2">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+            <span>Send Request</span>
+          </button>
+        </div>
+
+        <!-- Response Viewer -->
+        <div class="glass-panel p-5 rounded-2xl border border-finBorder space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-white">Response Payload (<span id="api-resp-latency" class="text-emerald-400 font-mono">-- ms</span>)</h3>
+            <span id="api-resp-status" class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400 font-mono">Status: --</span>
+          </div>
+
+          <label class="block text-xs text-slate-400">JSON Response Body:</label>
+          <pre id="api-response-json" class="w-full bg-slate-950 font-mono text-xs text-emerald-300 p-3 rounded-xl border border-slate-700 h-64 overflow-y-auto">Click "Send Request" to test endpoint...</pre>
+        </div>
+      </div>
+
+      <!-- Code Snippets for Developers -->
+      <div class="glass-panel rounded-2xl border border-finBorder overflow-hidden">
+        <div class="px-4 py-2 bg-slate-900 border-b border-finBorder flex items-center justify-between">
+          <div class="flex space-x-2">
+            <button onclick="showCodeSnippet('curl')" id="btn-snippet-curl" class="px-3 py-1 rounded text-xs font-semibold text-white bg-indigo-600">cURL</button>
+            <button onclick="showCodeSnippet('python')" id="btn-snippet-python" class="px-3 py-1 rounded text-xs font-semibold text-slate-400 hover:text-white">Python</button>
+            <button onclick="showCodeSnippet('node')" id="btn-snippet-node" class="px-3 py-1 rounded text-xs font-semibold text-slate-400 hover:text-white">Node.js</button>
+          </div>
+          <button onclick="copyCurrentSnippet()" class="text-xs text-slate-400 hover:text-white flex items-center space-x-1">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span>Copy Snippet</span>
+          </button>
+        </div>
+        <pre class="p-4 text-xs font-mono text-indigo-200 overflow-x-auto bg-slate-950 max-h-56" id="snippet-code-display"></pre>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= IMAGE MODAL LIGHTBOX ================= -->
+  <div id="image-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="relative max-w-4xl w-full bg-slate-900 border border-slate-700 rounded-2xl overflow-hidden shadow-2xl">
+      <div class="px-4 py-3 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+        <h3 id="modal-img-title" class="text-sm font-bold text-white">Visual Inspection</h3>
+        <button onclick="closeImageModal()" class="text-slate-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-4 bg-slate-950 flex items-center justify-center max-h-[80vh] overflow-auto">
+        <img id="modal-img-tag" src="" alt="Zoomed Plot" class="max-w-full h-auto rounded-lg">
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom App JavaScript -->
+  <script src="/static/js/app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
